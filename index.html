@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background: #e8f5e9;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      text-align: left;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #333;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .answers {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 25px 0;
+    }
+
+    .answers li {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .answers input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .answers label {
+      cursor: pointer;
+      flex: 1;
+    }
+
+    /* nút chính */
+    button {
+      display: block;
+      margin: 0 auto;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background: #28a745;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+
+    #result-img {
+      display: none;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    #result-img img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    /* --- Popup --- */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      position: relative;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .popup-content img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .popup-close:hover {
+      color: red;
+    }
+
+    /* --- Nút Gợi ý (title + sub text) --- */
+    .hint-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 15px auto 0;
+      padding: 12px 25px;
+      background: transparent;
+      border: 2px solid #555;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .hint-box:hover {
+      background: #f8f8f8;
+    }
+
+    .hint-title {
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 1;
+      color: #333;
+    }
+
+    .hint-sub {
+      font-size: 12px;
+      color: #777;
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container" id="quiz">
+    <h2>Câu hỏi: Tìm ra hướng đi đúng của vụ án</h2>
+    <div class="subtitle">Đâu là những vật chứng khiến bạn đưa ra hướng đi mới cho vụ án</div>
+
+    <ul class="answers" id="q1">
+      <li><input type="checkbox" value="1" id="ans1"><label for="ans1">Báo cáo vụ án</label></li>
+      <li><input type="checkbox" value="2" id="ans2"><label for="ans2">Câu hỏi về nạn nhân</label></li>
+      <li><input type="checkbox" value="3" id="ans3"><label for="ans3">Lời khai nhân chứng: Nguyễn Văn Hải</label></li>
+      <li><input type="checkbox" value="4" id="ans4"><label for="ans4">Lời khai nhân chứng: Nguyễn Thị Lan</label></li>
+      <li><input type="checkbox" value="5" id="ans5"><label for="ans5">Lời khai nhân chứng: Nguyễn Nhật Linh</label></li>
+      <li><input type="checkbox" value="6" id="ans6"><label for="ans6">Lời khai nghi phạm: Nguyễn Ngọc</label></li>
+      <li><input type="checkbox" value="7" id="ans7"><label for="ans7">Lời khai nghi phạm: Vũ Hải Yến</label></li>
+      <li><input type="checkbox" value="8" id="ans8"><label for="ans8">Lời khai nghi phạm: Hoàng Tiến</label></li>
+      <li><input type="checkbox" value="9" id="ans9"><label for="ans9">Giám định mẫu vật: con dao</label></li>
+      <li><input type="checkbox" value="10" id="ans10"><label for="ans10">Giám định mẫu vật: đôi giày của Ngọc</label></li>
+      <li><input type="checkbox" value="11" id="ans11"><label for="ans11">Giám định mẫu vật: Ly rượu</label></li>
+      <li><input type="checkbox" value="12" id="ans12"><label for="ans12">Ảnh hiện trường</label></li>
+    </ul>
+
+    <button onclick="checkAnswers()">Kiểm tra đáp án</button>
+
+    <!-- Nút gợi ý với 2 dòng text -->
+    <button class="hint-box" onclick="showHintPopup()">
+      <span class="hint-title">Gợi ý</span>
+      <span class="hint-sub">(chỉ sử dụng gợi ý khi đã rất bế tắc)</span>
+    </button>
+  </div>
+
+  <div id="result-img">
+    <img id="result-image" src="" alt="Kết quả">
+  </div>
+
+  <!-- Popup sai -->
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <span class="popup-close" onclick="closePopup('popup')">×</span>
+      <img id="popup-img" src="" alt="Sai rồi">
+    </div>
+  </div>
+
+  <!-- Popup gợi ý -->
+  <div class="popup" id="hint-popup">
+    <div class="popup-content">
+      <span class="popup-close" onclick="closePopup('hint-popup')">×</span>
+      <img id="hint-popup-img" src="" alt="Gợi ý">
+    </div>
+  </div>
+
+  <script>
+    function checkAnswers() {
+      let selected = [];
+      document.querySelectorAll('#q1 input[type="checkbox"]:checked').forEach(cb => {
+        selected.push(parseInt(cb.value));
+      });
+
+      if (selected.length !== 3) {
+        alert("Bạn phải chọn đúng 3 đáp án!");
+        return;
+      }
+
+      const correct = [6, 9, 12];
+      selected.sort((a,b) => a-b);
+
+      if (JSON.stringify(selected) === JSON.stringify(correct)) {
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('result-img').style.display = 'block';
+        document.getElementById('result-image').src =
+          "https://raw.githubusercontent.com/designdaovn/Hosomat-acgiaacbao/refs/heads/main/Giai%20thich%20copy.jpg";
+      } else {
+        document.getElementById('popup').style.display = 'flex';
+        document.getElementById('popup-img').src =
+          "https://raw.githubusercontent.com/designdaovn/Hosomat-acgiaacbao/refs/heads/main/khichondaansai.png";
+      }
+    }
+
+    function closePopup(id) {
+      const p = document.getElementById(id);
+      if (p) p.style.display = 'none';
+    }
+
+    function showHintPopup() {
+      const HINT_IMAGE_URL = "https://raw.githubusercontent.com/designdaovn/Hosomat-acgiaacbao/refs/heads/main/goi%20y%201.png";
+      document.getElementById('hint-popup-img').src = HINT_IMAGE_URL;
+      document.getElementById('hint-popup').style.display = 'flex';
+    }
+
+    document.querySelectorAll('.popup').forEach(p => {
+      p.addEventListener('click', (e) => {
+        if (e.target === p) p.style.display = 'none';
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+      }
+    });
+  </script>
+</body>
+</html>
