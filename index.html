@@ -1,81 +1,149 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Quiz</title>
-  <style>
-    /* === GIỮ NGUYÊN CSS CỦA BẠN === */
-    body {
-      font-family: "Arial", sans-serif;
-      background: #e8f5e9;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<title>Quiz</title>
 
-    .quiz-container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      text-align: left;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #e8f5e9;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+}
 
-    h2 {
-      margin-bottom: 10px;
-      color: #333;
-      text-align: center;
-    }
+.quiz-container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  text-align: left;
+}
 
-    .subtitle {
-      font-size: 16px;
-      color: #666;
-      margin-bottom: 20px;
-      text-align: center;
-    }
+h2 {
+  text-align: center;
+  color: #333;
+}
 
-    .answers {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 25px 0;
-    }
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+}
 
-    .answers li {
-      margin-bottom: 12px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
+.answers {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 25px 0;
+}
 
-    .answers input {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
+.answers li {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #28a745;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+.answers input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
 
-    #result-img {
-      display: none;
-      margin-top: 30px;
-    }
+button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-    #result-img img {
-      max-width: 100%;
-      border-radius: 15px;
-    }
-  </style>
+button:hover {
+  background: #218838;
+}
+
+/* ===== NÚT GỢI Ý ===== */
+.hint-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 15px;
+  padding: 12px;
+  background: transparent;
+  border: 2px solid #555;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.hint-box:hover {
+  background: #f8f8f8;
+}
+
+.hint-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.hint-sub {
+  font-size: 12px;
+  color: #777;
+}
+
+/* ===== KẾT QUẢ ===== */
+#result-img {
+  display: none;
+  margin-top: 30px;
+}
+
+#result-img img {
+  max-width: 100%;
+  border-radius: 15px;
+}
+
+/* ===== POPUP ===== */
+.popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-content {
+  position: relative;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+}
+
+.popup-content img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.popup-close {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
@@ -87,20 +155,43 @@
   <ul class="answers" id="answers"></ul>
 
   <button onclick="checkAnswer()">Xác nhận</button>
+
+  <!-- NÚT GỢI Ý (CÓ TEXT) -->
+  <button class="hint-box" onclick="showHint()">
+    <span class="hint-title">Gợi ý</span>
+    <span class="hint-sub">(chỉ sử dụng gợi ý khi đã rất bế tắc)</span>
+  </button>
 </div>
 
+<!-- Ảnh chiến thắng -->
 <div id="result-img">
   <img src="https://raw.githubusercontent.com/designdaovn/Kyanlenguyetvien_nhiemvu1/refs/heads/main/Giai%20thich%20copy.jpg">
 </div>
 
-<script>
-  let step = 1;
+<!-- Popup trả lời sai -->
+<div class="popup" id="wrong-popup">
+  <div class="popup-content">
+    <span class="popup-close" onclick="closePopup('wrong-popup')">×</span>
+    <img src="https://raw.githubusercontent.com/designdaovn/Hosomat-acgiaacbao/refs/heads/main/khichondaansai.png">
+  </div>
+</div>
 
-  const q1 = {
-    title: "Câu hỏi 1: Ai là hung thủ?",
-    sub: "(chọn 1 đáp án đúng)",
-    answers: [
-      "Trần Nhật Minh",
+<!-- Popup gợi ý -->
+<div class="popup" id="hint-popup">
+  <div class="popup-content">
+    <span class="popup-close" onclick="closePopup('hint-popup')">×</span>
+    <img src="https://raw.githubusercontent.com/designdaovn/Kyanlenguyetvien_nhiemvu1/refs/heads/main/goi%20y%201Artboard%201.jpg">
+  </div>
+</div>
+
+<script>
+let step = 1;
+
+const q1 = {
+  title: "Câu hỏi 1: Ai là hung thủ?",
+  sub: "(chọn 1 đáp án đúng)",
+  answers: [
+       "Trần Nhật Minh",
       "Nguyễn Thị Lộ - bà vú",
       "Lý Nhật Vũ",
       "Tam Phu Nhân",
@@ -108,15 +199,15 @@
       "Tiểu Linh",
       "Tiểu Phong",
       "Trần Tướng Quân",
-    ],
-    correct: [7] // index đúng (0-based)
-  };
+  ],
+  correct: [7]
+};
 
-  const q2 = {
-    title: "Câu hỏi 2: Đâu là những vật chứng,lời khai khiến bạn đưa ra kết luận trên",
-    sub: "(Chọn đúng ít nhất 5 đáp án)",
-    answers: [
-      "Báo cáo Vụ án",
+const q2 = {
+  title: "Câu hỏi 2: Đâu là những vật chứng,lời khai khiến bạn đưa ra kết luận trên",
+  sub: "(Chọn đúng ít nhất 5 đáp án)",
+  answers: [
+    "Báo cáo Vụ án",
       "Câu hỏi về nạn nhân - Tam Phu Nhân",
       "Lời khai nhân chứng - Tào Quảng",
       "Lời khai nhân chứng - Nguyễn Thị Lộ",
@@ -132,53 +223,77 @@
       "Vật chứng số 4 - dấu chân trong thư phòng",
       "Báo cáo khám nghiệm tử thi",
       "Ảnh hiện trường",
-    ],
-    correct: [0,1,5,6,7,11,13,14,15]
-  };
+  ],
+  correct: [0,1,5,6,7,11,13,14,15]
+};
 
-  function loadQuestion(q, multi = false) {
-    document.getElementById("question-title").innerText = q.title;
-    document.getElementById("question-sub").innerText = q.sub;
+function loadQuestion(q, multi=false) {
+  document.getElementById("question-title").innerText = q.title;
+  document.getElementById("question-sub").innerText = q.sub;
 
-    const ul = document.getElementById("answers");
-    ul.innerHTML = "";
+  const ul = document.getElementById("answers");
+  ul.innerHTML = "";
 
-    q.answers.forEach((text, i) => {
-      ul.innerHTML += `
-        <li>
-          <input type="${multi ? 'checkbox' : 'radio'}" name="ans" value="${i}">
-          <label>${text}</label>
-        </li>`;
-    });
-  }
+  q.answers.forEach((text, i) => {
+    ul.innerHTML += `
+      <li>
+        <input type="${multi ? 'checkbox' : 'radio'}" name="ans" value="${i}">
+        <label>${text}</label>
+      </li>
+    `;
+  });
+}
 
-  loadQuestion(q1, false);
+loadQuestion(q1, false);
 
-  function checkAnswer() {
-    const checked = [...document.querySelectorAll('input:checked')].map(i => +i.value);
+function checkAnswer() {
+  const checked = [...document.querySelectorAll("input:checked")].map(i => +i.value);
 
-    if (step === 1) {
-      if (checked.length !== 1 || checked[0] !== q1.correct[0]) {
-        alert("Sai rồi!");
-        return;
-      }
-      step = 2;
-      loadQuestion(q2, true);
+  if (step === 1) {
+    if (checked.length !== 1 || checked[0] !== q1.correct[0]) {
+      showWrong();
       return;
     }
+    step = 2;
+    loadQuestion(q2, true);
+    return;
+  }
 
-    if (step === 2) {
-      const correctPicked = checked.filter(v => q2.correct.includes(v));
-      if (correctPicked.length >= 5) {
-        document.getElementById("quiz").style.display = "none";
-        document.getElementById("result-img").style.display = "block";
-      } else {
-        alert("Chưa đủ đáp án đúng!");
-      }
+  if (step === 2) {
+    const right = checked.filter(v => q2.correct.includes(v));
+    if (right.length >= 5) {
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("result-img").style.display = "block";
+    } else {
+      showWrong();
     }
   }
+}
+
+function showWrong() {
+  document.getElementById("wrong-popup").style.display = "flex";
+}
+
+function showHint() {
+  document.getElementById("hint-popup").style.display = "flex";
+}
+
+function closePopup(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+document.querySelectorAll(".popup").forEach(p => {
+  p.addEventListener("click", e => {
+    if (e.target === p) p.style.display = "none";
+  });
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+  }
+});
 </script>
 
 </body>
 </html>
-
